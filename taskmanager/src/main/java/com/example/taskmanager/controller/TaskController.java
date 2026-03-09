@@ -1,76 +1,45 @@
 package com.example.taskmanager.controller;
 
-import com.example.taskmanager.dto.TaskRequestDto;
-import com.example.taskmanager.dto.TaskResponseDto;
-import com.example.taskmanager.entity.Task;
 import com.example.taskmanager.service.TaskService;
 import org.springframework.web.bind.annotation.*;
 
+import com.example.taskmanager.dto.TaskRequestDTO;
+import com.example.taskmanager.dto.TaskResponseDTO;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/tasks")
 public class TaskController {
-
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
         this.taskService = taskService;
     }
 
-    // ================= CREATE TASK =================
-    @PostMapping
-    public TaskResponseDto createTask(@RequestBody TaskRequestDto request) {
-
-        // DTO → Entity mapping
-        boolean completed = "COMPLETED".equalsIgnoreCase(request.getStatus());
-
-        Task task = new Task(
-                request.getTitle(),
-                request.getDescription(),
-                completed
-        );
-
-        Task savedTask = taskService.createTask(task);
-
-        // Entity → DTO mapping
-        String status = savedTask.isCompleted() ? "COMPLETED" : "PENDING";
-
-        return new TaskResponseDto(
-                savedTask.getId(),
-                savedTask.getTitle(),
-                savedTask.getDescription(),
-                status
-        );
+    @PostMapping("/tasks")
+    public TaskResponseDTO createTask(@RequestBody TaskRequestDTO requestDTO)
+    {
+        return taskService.createTask(requestDTO);
     }
 
-    // ================= GET ALL TASKS =================
-    @GetMapping
-    public List<TaskResponseDto> getAllTasks() {
-
-        return taskService.getAllTasks()
-                .stream()
-                .map(task -> new TaskResponseDto(
-                        task.getId(),
-                        task.getTitle(),
-                        task.getDescription(),
-                        task.isCompleted() ? "COMPLETED" : "PENDING"
-                ))
-                .collect(Collectors.toList());
+    @GetMapping("/tasks")
+    public List<TaskResponseDTO> getAllTasks(){
+        return taskService.getAllTasks();
     }
 
-    // ================= GET TASK BY ID =================
-    @GetMapping("/{id}")
-    public TaskResponseDto getTaskById(@PathVariable Long id) {
+    @GetMapping("/tasks/{id}")
+    public TaskResponseDTO getTaskById(@PathVariable Long id) {
+        return taskService.getTaskById(id);
+    }
 
-        Task task = taskService.getTaskById(id);
+    @PutMapping("/tasks/{id}")
+    public TaskResponseDTO updateTask(@PathVariable Long id,
+                                      @RequestBody TaskRequestDTO requestDTO) {
+        return taskService.updateTask(id, requestDTO);
+    }
 
-        return new TaskResponseDto(
-                task.getId(),
-                task.getTitle(),
-                task.getDescription(),
-                task.isCompleted() ? "COMPLETED" : "PENDING"
-        );
+    @DeleteMapping("/tasks/{id}")
+    public void deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
     }
 }
