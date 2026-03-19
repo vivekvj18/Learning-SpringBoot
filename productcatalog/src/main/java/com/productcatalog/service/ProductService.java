@@ -1,5 +1,6 @@
 package com.productcatalog.service;
 
+import com.productcatalog.dto.PaginatedResponseDTO;
 import com.productcatalog.dto.ProductRequestDTO;
 import com.productcatalog.dto.ProductResponseDTO;
 
@@ -11,7 +12,7 @@ public interface ProductService {
 
     ProductResponseDTO getProductById(Long id);
 
-    List<ProductResponseDTO> getAllProducts();
+    PaginatedResponseDTO getAllProducts(int page, int size, String sort);
 
     ProductResponseDTO updateProduct(Long id, ProductRequestDTO request);
 

@@ -1,5 +1,6 @@
 package com.productcatalog.controller;
 
+import com.productcatalog.dto.PaginatedResponseDTO;
 import com.productcatalog.dto.ProductRequestDTO;
 import com.productcatalog.dto.ProductResponseDTO;
 import com.productcatalog.service.ProductService;
@@ -29,8 +30,12 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponseDTO> getAllProducts() {
-        return productService.getAllProducts();
+    public PaginatedResponseDTO getAllProducts(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam(required = false) String sort
+    ) {
+        return productService.getAllProducts(page, size, sort);
     }
 
     @PutMapping("/{id}")

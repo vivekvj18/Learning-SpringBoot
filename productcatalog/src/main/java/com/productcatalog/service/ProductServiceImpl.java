@@ -1,11 +1,15 @@
 package com.productcatalog.service;
 
+import com.productcatalog.dto.PaginatedResponseDTO;
 import com.productcatalog.dto.ProductRequestDTO;
 import com.productcatalog.dto.ProductResponseDTO;
 import com.productcatalog.entity.Product;
 import com.productcatalog.repository.ProductRepository;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,12 +49,40 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponseDTO> getAllProducts() {
+    public PaginatedResponseDTO getAllProducts(int page, int size, String sort) {
 
-        return productRepository.findAll()
+        Pageable pageable;
+
+        if (sort != null && !sort.isEmpty()) {
+
+            String[] sortParams = sort.split(",");
+
+            if (sortParams.length == 2 && sortParams[1].equalsIgnoreCase("desc")) {
+                pageable = PageRequest.of(page, size, Sort.by(sortParams[0]).descending());
+            } else {
+                pageable = PageRequest.of(page, size, Sort.by(sortParams[0]).ascending());
+            }
+
+        } else {
+            pageable = PageRequest.of(page, size);
+        }
+
+        Page<Product> productPage = productRepository.findAll(pageable);
+
+        List<ProductResponseDTO> productList = productPage.getContent()
                 .stream()
                 .map(this::mapToResponseDTO)
-                .collect(Collectors.toList());
+                .toList();
+
+        PaginatedResponseDTO response = new PaginatedResponseDTO();
+
+        response.setProducts(productList);
+        response.setPage(productPage.getNumber());
+        response.setSize(productPage.getSize());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setTotalElements(productPage.getTotalElements());
+
+        return response;
     }
 
     @Override
