@@ -1,0 +1,46 @@
+# Defines services (containers) that will run together
+services:
+
+  # 🗄 MySQL Database Service
+  mysql:
+    image: mysql:8                 # Official MySQL 8 image
+    restart: always                # Auto-restart if container crashes
+
+    environment:
+      # 🔐 Values will come from .env file (NO hardcoding now)
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}   # Root password
+      MYSQL_DATABASE: ${MYSQL_DATABASE}             # DB auto-created
+      MYSQL_USER: ${MYSQL_USER}                     # Custom user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}             # User password
+
+    ports:
+      - "3307:3306"               # Host:Container → Access MySQL from host
+
+    volumes:
+      - mysql-data:/var/lib/mysql # Persist DB data (VERY IMPORTANT)
+
+    healthcheck:
+      # 🧠 Check if MySQL is actually READY (auth + connection)
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
+      interval: 5s                # Check every 5 seconds
+      timeout: 5s                 # Max wait per check
+      retries: 5                  # Fail after 5 retries
+
+
+  # 🚀 Spring Boot Application Service
+  app:
+    image: 2001vivekjoshi/taskmanager:1.0       # ✅ Correct indentation
+    restart: always               # Auto-restart if app crashes
+
+    ports:
+      - "8082:8082"               # Access app via browser
+
+    depends_on:
+      mysql:
+        # 🧠 Start app ONLY when MySQL is HEALTHY
+        condition: service_healthy
+
+
+# 💾 Named volumes (persistent storage managed by Docker)
+volumes:
+  mysql-data:

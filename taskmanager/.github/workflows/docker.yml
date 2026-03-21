@@ -1,0 +1,20 @@
+# Name of the workflow (just for display in GitHub UI)
+name: Docker CI Pipeline
+
+# 🎯 WHEN should this pipeline run?
+on:
+  push:
+    branches:
+      - main   # run when code is pushed to main branch
+
+# 🧠 WHAT to run (pipeline definition)
+jobs:
+  build:
+
+    # 🔧 Runner (machine where pipeline runs)
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Just print something (test step)
+      - name: Print Hello
+        run: echo "Pipeline is working 🚀"
