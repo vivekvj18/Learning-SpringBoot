@@ -1,20 +1,24 @@
-# Name of the workflow (just for display in GitHub UI)
 name: Docker CI Pipeline
 
-# 🎯 WHEN should this pipeline run?
 on:
   push:
     branches:
-      - master   # run when code is pushed to main branch
+      - master
 
-# 🧠 WHAT to run (pipeline definition)
 jobs:
   build:
-
-    # 🔧 Runner (machine where pipeline runs)
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Just print something (test step)
+
+      # 🔥 STEP 1 — Checkout code (VERY IMPORTANT)
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 🔥 STEP 2 — Verify files
+      - name: List files
+        run: ls -la
+
+      # 🔥 STEP 3 — Just test
       - name: Print Hello
-        run: echo "Pipeline is working...... 🚀"
+        run: echo "Pipeline is working 🚀"
