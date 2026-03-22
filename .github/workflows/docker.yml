@@ -17,4 +17,4 @@ jobs:
     steps:
       # Step 1: Just print something (test step)
       - name: Print Hello
-        run: echo "Pipeline is working 🚀"
+        run: echo "Pipeline is working...... 🚀"
