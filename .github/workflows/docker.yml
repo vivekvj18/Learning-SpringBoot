@@ -15,10 +15,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 🔥 STEP 2 — Verify files
+      # ✅ Verify files
       - name: List files
         run: ls -la
 
-      # 🔥 STEP 3 — Just test
+      # 🔥 NEW STEP — Build Docker Image
+      - name: Build Docker Image
+        run: docker build -t taskmanager:ci .
+
+      # Just for confirmation
       - name: Print Hello
-        run: echo "Pipeline is working 🚀"
+        run: echo "Docker build completed 🚀"
